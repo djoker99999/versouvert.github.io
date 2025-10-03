@@ -27,7 +27,7 @@
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             width: 100%;
             background: rgba(0, 0, 0, 0.7);
             border-radius: 20px;
@@ -84,44 +84,46 @@
         .game-container {
             display: flex;
             justify-content: center;
-            gap: 80px;
-            margin-bottom: 40px;
+            gap: 100px;
+            margin-bottom: 50px;
             position: relative;
-            height: 300px;
+            height: 350px;
             width: 100%;
-            perspective: 1200px;
-        }
-
-        .cup {
-            width: 140px;
-            height: 200px;
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.4s ease;
-            transform-style: preserve-3d;
+            perspective: 1500px;
         }
 
         .glass {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, 
-                rgba(248, 249, 250, 0.9) 0%, 
-                rgba(233, 236, 239, 0.8) 30%,
-                rgba(206, 212, 218, 0.7) 70%,
-                rgba(173, 181, 189, 0.6) 100%);
-            border-radius: 10px 10px 60px 60px;
+            width: 120px;
+            height: 250px;
             position: relative;
-            box-shadow: 
-                0 15px 35px rgba(0, 0, 0, 0.5),
-                inset 0 2px 10px rgba(255, 255, 255, 0.3),
-                inset 0 -2px 10px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: transform 0.5s ease;
             transform-style: preserve-3d;
-            z-index: 2;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
         }
 
-        .glass::before {
+        .glass-cup {
+            width: 100px;
+            height: 120px;
+            background: linear-gradient(135deg, 
+                rgba(248, 249, 250, 0.9) 0%, 
+                rgba(233, 236, 239, 0.85) 30%,
+                rgba(206, 212, 218, 0.8) 70%,
+                rgba(173, 181, 189, 0.75) 100%);
+            border-radius: 50px 50px 10px 10px;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 
+                0 15px 35px rgba(0, 0, 0, 0.4),
+                inset 0 2px 15px rgba(255, 255, 255, 0.4),
+                inset 0 -2px 15px rgba(0, 0, 0, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            z-index: 3;
+        }
+
+        .glass-cup::before {
             content: '';
             position: absolute;
             top: 5px;
@@ -129,47 +131,78 @@
             right: 5px;
             bottom: 5px;
             background: linear-gradient(135deg, 
-                rgba(255, 255, 255, 0.2) 0%,
+                rgba(255, 255, 255, 0.3) 0%,
                 rgba(255, 255, 255, 0.1) 50%,
                 transparent 100%);
-            border-radius: 8px 8px 55px 55px;
+            border-radius: 45px 45px 8px 8px;
             z-index: 1;
         }
 
-        .glass::after {
-            content: '';
+        .glass-stem {
+            width: 12px;
+            height: 80px;
+            background: linear-gradient(to bottom, 
+                rgba(248, 249, 250, 0.9),
+                rgba(206, 212, 218, 0.8));
             position: absolute;
-            top: -2px;
+            top: 120px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80%;
-            height: 15px;
-            background: linear-gradient(to bottom, 
-                rgba(255, 255, 255, 0.8), 
-                rgba(255, 255, 255, 0.3));
-            border-radius: 50%;
-            box-shadow: 0 2px 10px rgba(255, 255, 255, 0.3);
-            z-index: 3;
+            border-radius: 6px;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                inset 0 2px 5px rgba(255, 255, 255, 0.3);
+            z-index: 2;
         }
 
-        .cup:hover {
-            transform: translateY(-15px) rotateX(10deg);
+        .glass-base {
+            width: 60px;
+            height: 20px;
+            background: linear-gradient(135deg, 
+                rgba(248, 249, 250, 0.9),
+                rgba(206, 212, 218, 0.8));
+            position: absolute;
+            top: 200px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 30px 30px 10px 10px;
+            box-shadow: 
+                0 10px 25px rgba(0, 0, 0, 0.4),
+                inset 0 2px 8px rgba(255, 255, 255, 0.3);
+            z-index: 1;
         }
 
-        .cup.lifted {
-            transform: translateY(-80px) rotateX(20deg);
+        .glass-base::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            background: linear-gradient(135deg, 
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0.1));
+            border-radius: 28px 28px 8px 8px;
+        }
+
+        .glass:hover {
+            transform: translateY(-10px) rotateX(10deg);
+        }
+
+        .glass.lifted {
+            transform: translateY(-60px) rotateX(25deg);
             z-index: 10;
         }
 
         .ball-container {
             position: absolute;
-            top: 120px;
+            top: 60px;
             left: 50%;
             transform: translateX(-50%);
-            width: 60px;
-            height: 60px;
-            z-index: 1;
-            transition: all 0.4s ease;
+            width: 50px;
+            height: 50px;
+            z-index: 4;
+            transition: all 0.5s ease;
         }
 
         .ball {
@@ -180,12 +213,12 @@
             background-position: center;
             border-radius: 50%;
             box-shadow: 
-                0 0 20px rgba(255, 215, 0, 0.8),
-                0 0 40px rgba(255, 215, 0, 0.4),
-                inset 0 0 10px rgba(255, 255, 255, 0.5);
+                0 0 25px rgba(255, 215, 0, 0.9),
+                0 0 50px rgba(255, 215, 0, 0.6),
+                inset 0 0 15px rgba(255, 255, 255, 0.6);
             opacity: 0;
             transition: opacity 0.4s ease;
-            filter: brightness(1.1) contrast(1.2);
+            filter: brightness(1.2) contrast(1.3);
         }
 
         .ball.visible {
@@ -196,13 +229,13 @@
         @keyframes ballGlow {
             0% { 
                 box-shadow: 
-                    0 0 20px rgba(255, 215, 0, 0.8),
-                    0 0 40px rgba(255, 215, 0, 0.4);
+                    0 0 25px rgba(255, 215, 0, 0.9),
+                    0 0 50px rgba(255, 215, 0, 0.6);
             }
             100% { 
                 box-shadow: 
-                    0 0 30px rgba(255, 215, 0, 1),
-                    0 0 60px rgba(255, 215, 0, 0.6);
+                    0 0 35px rgba(255, 215, 0, 1),
+                    0 0 70px rgba(255, 215, 0, 0.8);
             }
         }
 
@@ -212,24 +245,25 @@
 
         .shadow {
             position: absolute;
-            bottom: -20px;
+            bottom: -15px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
+            width: 80px;
             height: 20px;
-            background: radial-gradient(ellipse, rgba(0, 0, 0, 0.4), transparent 70%);
+            background: radial-gradient(ellipse, rgba(0, 0, 0, 0.5), transparent 70%);
             border-radius: 50%;
-            filter: blur(5px);
-            transition: all 0.4s ease;
+            filter: blur(8px);
+            transition: all 0.5s ease;
+            z-index: 0;
         }
 
-        .cup.lifted .shadow {
-            transform: translateX(-50%) scale(0.8);
-            opacity: 0.6;
+        .glass.lifted .shadow {
+            transform: translateX(-50%) scale(0.7);
+            opacity: 0.4;
         }
 
         .controls {
-            margin-top: 30px;
+            margin-top: 40px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -257,8 +291,8 @@
             background: #ff6b6b;
             color: white;
             border: none;
-            padding: 10px 20px;
-            font-size: 1.1rem;
+            padding: 12px 24px;
+            font-size: 1.2rem;
             border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -285,13 +319,13 @@
 
         .message {
             font-size: 1.6rem;
-            margin-top: 25px;
-            min-height: 70px;
+            margin-top: 30px;
+            min-height: 80px;
             font-weight: bold;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 15px 25px;
+            padding: 20px 30px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 15px;
             border: 1px solid rgba(255, 255, 255, 0.2);
@@ -300,9 +334,9 @@
 
         .score {
             font-size: 1.4rem;
-            margin-top: 15px;
+            margin-top: 20px;
             background: rgba(255, 255, 255, 0.15);
-            padding: 10px 25px;
+            padding: 12px 30px;
             border-radius: 25px;
             font-weight: bold;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -310,82 +344,105 @@
 
         @media (max-width: 768px) {
             .game-container {
-                gap: 40px;
+                gap: 60px;
             }
             
-            .cup {
-                width: 110px;
-                height: 160px;
+            .glass {
+                width: 100px;
+                height: 220px;
             }
             
-            .ball-container {
-                top: 90px;
-                width: 50px;
-                height: 50px;
+            .glass-cup {
+                width: 80px;
+                height: 100px;
             }
             
-            #startButton {
-                width: 200px;
+            .glass-stem {
+                height: 70px;
+                top: 100px;
             }
             
-            h1 {
-                font-size: 2.2rem;
-            }
-            
-            p {
-                font-size: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .game-container {
-                gap: 25px;
-            }
-            
-            .cup {
-                width: 90px;
-                height: 140px;
+            .glass-base {
+                top: 170px;
             }
             
             .ball-container {
-                top: 80px;
+                top: 50px;
                 width: 45px;
                 height: 45px;
             }
             
             #startButton {
-                width: 170px;
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-container {
+                gap: 40px;
             }
             
-            h1 {
-                font-size: 1.8rem;
+            .glass {
+                width: 80px;
+                height: 200px;
+            }
+            
+            .glass-cup {
+                width: 70px;
+                height: 90px;
+            }
+            
+            .glass-stem {
+                height: 60px;
+                top: 90px;
+            }
+            
+            .glass-base {
+                top: 150px;
+                width: 50px;
+            }
+            
+            .ball-container {
+                top: 45px;
+                width: 40px;
+                height: 40px;
+            }
+            
+            #startButton {
+                width: 170px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Jeu des Gobelets</h1>
-        <p>Trouvez sous quel gobelet se cache la balle ! Cliquez sur l'image pour commencer une partie.</p>
+        <h1>Jeu des Verres à Pied</h1>
+        <p>Trouvez sous quel verre se cache la balle ! Cliquez sur l'image pour commencer une partie.</p>
         
         <div class="game-area">
             <div class="game-container">
-                <div class="cup" id="cup1">
-                    <div class="glass"></div>
+                <div class="glass" id="glass1">
+                    <div class="glass-cup"></div>
+                    <div class="glass-stem"></div>
+                    <div class="glass-base"></div>
                     <div class="ball-container">
                         <div class="ball" id="ball1"></div>
                     </div>
                     <div class="shadow"></div>
                 </div>
-                <div class="cup" id="cup2">
-                    <div class="glass"></div>
+                <div class="glass" id="glass2">
+                    <div class="glass-cup"></div>
+                    <div class="glass-stem"></div>
+                    <div class="glass-base"></div>
                     <div class="ball-container">
                         <div class="ball" id="ball2"></div>
                     </div>
                     <div class="shadow"></div>
                 </div>
-                <div class="cup" id="cup3">
-                    <div class="glass"></div>
+                <div class="glass" id="glass3">
+                    <div class="glass-cup"></div>
+                    <div class="glass-stem"></div>
+                    <div class="glass-base"></div>
                     <div class="ball-container">
                         <div class="ball" id="ball3"></div>
                     </div>
@@ -407,7 +464,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const cups = document.querySelectorAll('.cup');
+            const glasses = document.querySelectorAll('.glass');
             const balls = document.querySelectorAll('.ball');
             const ballContainers = document.querySelectorAll('.ball-container');
             const message = document.getElementById('message');
@@ -417,9 +474,9 @@
             
             let score = 0;
             let gameActive = false;
-            let winningCup = 0;
+            let winningGlass = 0;
             let cheatMode = false;
-            let cupPositions = [0, 1, 2];
+            let glassPositions = [0, 1, 2];
             
             // Fonction pour démarrer une nouvelle partie
             function startNewGame() {
@@ -433,12 +490,14 @@
                     ball.classList.add('hidden-under-cup');
                 });
                 
-                // En mode normal, la balle est TOUJOURS sous le premier gobelet
-                // En mode triche, on choisit aléatoirement
+                // En mode normal, la balle est TOUJOURS sous un verre différent de celui choisi
+                // En mode triche, la balle est SOUS le verre choisi
                 if (cheatMode) {
-                    winningCup = Math.floor(Math.random() * 3);
+                    // En mode triche, on choisit aléatoirement au début
+                    winningGlass = Math.floor(Math.random() * 3);
                 } else {
-                    winningCup = 0; // Toujours sous le premier gobelet en mode normal
+                    // En mode normal, on choisit aléatoirement mais on changera après le clic
+                    winningGlass = Math.floor(Math.random() * 3);
                 }
                 
                 // Réinitialiser le message
@@ -446,126 +505,140 @@
                 message.style.color = 'white';
                 
                 // Montrer la balle au début
-                balls[winningCup].classList.remove('hidden-under-cup');
-                balls[winningCup].classList.add('visible');
+                balls[winningGlass].classList.remove('hidden-under-cup');
+                balls[winningGlass].classList.add('visible');
                 message.textContent = "Regardez bien où est la balle...";
                 
                 // Après 2 secondes, cacher la balle et mélanger
                 setTimeout(() => {
-                    balls[winningCup].classList.remove('visible');
-                    balls[winningCup].classList.add('hidden-under-cup');
-                    message.textContent = "Les gobelets se mélangent...";
-                    shuffleCups();
+                    balls[winningGlass].classList.remove('visible');
+                    balls[winningGlass].classList.add('hidden-under-cup');
+                    message.textContent = "Les verres se mélangent...";
+                    shuffleGlasses();
                 }, 2000);
             }
             
-            // Fonction pour mélanger les gobelets
-            function shuffleCups() {
+            // Fonction pour mélanger les verres
+            function shuffleGlasses() {
                 let shuffleCount = 0;
-                const maxShuffles = 10;
+                const maxShuffles = 12;
                 
                 function performShuffle() {
                     if (shuffleCount >= maxShuffles) {
                         // Fin du mélange, activer le jeu
                         gameActive = true;
-                        message.textContent = "Où est la balle ? Cliquez sur un gobelet !";
+                        message.textContent = "Où est la balle ? Cliquez sur un verre !";
                         startButton.style.opacity = "1";
                         startButton.style.pointerEvents = "auto";
                         return;
                     }
                     
-                    // Choisir deux gobelets aléatoires à échanger
-                    const cup1Index = Math.floor(Math.random() * 3);
-                    let cup2Index;
+                    // Choisir deux verres aléatoires à échanger
+                    const glass1Index = Math.floor(Math.random() * 3);
+                    let glass2Index;
                     do {
-                        cup2Index = Math.floor(Math.random() * 3);
-                    } while (cup2Index === cup1Index);
+                        glass2Index = Math.floor(Math.random() * 3);
+                    } while (glass2Index === glass1Index);
                     
-                    const cup1 = cups[cup1Index];
-                    const cup2 = cups[cup2Index];
-                    const ballContainer1 = ballContainers[cup1Index];
-                    const ballContainer2 = ballContainers[cup2Index];
+                    const glass1 = glasses[glass1Index];
+                    const glass2 = glasses[glass2Index];
+                    const ballContainer1 = ballContainers[glass1Index];
+                    const ballContainer2 = ballContainers[glass2Index];
                     
                     // Animer l'échange
-                    cup1.style.transition = "transform 0.6s ease";
-                    cup2.style.transition = "transform 0.6s ease";
-                    ballContainer1.style.transition = "transform 0.6s ease";
-                    ballContainer2.style.transition = "transform 0.6s ease";
+                    glass1.style.transition = "transform 0.7s ease";
+                    glass2.style.transition = "transform 0.7s ease";
+                    ballContainer1.style.transition = "transform 0.7s ease";
+                    ballContainer2.style.transition = "transform 0.7s ease";
                     
-                    // Calculer la distance entre les gobelets
-                    const cup1Rect = cup1.getBoundingClientRect();
-                    const cup2Rect = cup2.getBoundingClientRect();
-                    const distance = cup2Rect.left - cup1Rect.left;
+                    // Calculer la distance entre les verres
+                    const glass1Rect = glass1.getBoundingClientRect();
+                    const glass2Rect = glass2.getBoundingClientRect();
+                    const distance = glass2Rect.left - glass1Rect.left;
                     
                     // Animation d'échange avec effet de rotation
-                    cup1.style.transform = `translateX(${distance}px) rotateY(20deg)`;
-                    cup2.style.transform = `translateX(${-distance}px) rotateY(-20deg)`;
+                    glass1.style.transform = `translateX(${distance}px) rotateY(25deg)`;
+                    glass2.style.transform = `translateX(${-distance}px) rotateY(-25deg)`;
                     ballContainer1.style.transform = `translateX(${distance}px) translateX(-50%)`;
                     ballContainer2.style.transform = `translateX(${-distance}px) translateX(-50%)`;
                     
                     // Mettre à jour le gagnant si nécessaire
-                    if (cup1Index === winningCup) {
-                        winningCup = cup2Index;
-                    } else if (cup2Index === winningCup) {
-                        winningCup = cup1Index;
+                    if (glass1Index === winningGlass) {
+                        winningGlass = glass2Index;
+                    } else if (glass2Index === winningGlass) {
+                        winningGlass = glass1Index;
                     }
                     
                     // Après l'animation, réinitialiser les transformations
                     setTimeout(() => {
-                        cup1.style.transform = "";
-                        cup2.style.transform = "";
+                        glass1.style.transform = "";
+                        glass2.style.transform = "";
                         ballContainer1.style.transform = "translateX(-50%)";
                         ballContainer2.style.transform = "translateX(-50%)";
                         
                         // Mettre à jour les positions dans notre tableau
-                        const temp = cupPositions[cup1Index];
-                        cupPositions[cup1Index] = cupPositions[cup2Index];
-                        cupPositions[cup2Index] = temp;
+                        const temp = glassPositions[glass1Index];
+                        glassPositions[glass1Index] = glassPositions[glass2Index];
+                        glassPositions[glass2Index] = temp;
                         
                         shuffleCount++;
                         
                         // Attendre avant le prochain échange
-                        setTimeout(performShuffle, 700);
-                    }, 600);
+                        setTimeout(performShuffle, 800);
+                    }, 700);
                 }
                 
                 performShuffle();
             }
             
-            // Gérer le clic sur un gobelet
-            cups.forEach((cup, index) => {
-                cup.addEventListener('click', function() {
+            // Gérer le clic sur un verre
+            glasses.forEach((glass, index) => {
+                glass.addEventListener('click', function() {
                     if (!gameActive) return;
                     
                     // Désactiver les clics pendant la vérification
                     gameActive = false;
                     
-                    // Animer le soulèvement du gobelet
-                    cup.classList.add('lifted');
+                    // Animer le soulèvement du verre
+                    glass.classList.add('lifted');
+                    
+                    // En mode normal, déplacer la balle vers un autre verre
+                    if (!cheatMode) {
+                        // Choisir un verre différent de celui cliqué
+                        let newWinningGlass;
+                        do {
+                            newWinningGlass = Math.floor(Math.random() * 3);
+                        } while (newWinningGlass === index);
+                        
+                        winningGlass = newWinningGlass;
+                    } else {
+                        // En mode triche, la balle est SOUS le verre cliqué
+                        winningGlass = index;
+                    }
                     
                     // Après un court délai, révéler le résultat
                     setTimeout(() => {
                         // Réinitialiser les transformations
-                        cups.forEach(c => {
-                            c.style.transform = "";
-                            c.classList.remove('lifted');
+                        glasses.forEach(g => {
+                            g.style.transform = "";
+                            g.classList.remove('lifted');
                         });
                         
                         // Montrer toutes les balles pour révéler où était la vraie
                         balls.forEach(ball => {
                             ball.classList.remove('hidden-under-cup');
                         });
-                        balls[winningCup].classList.add('visible');
+                        balls[winningGlass].classList.add('visible');
                         
                         // Vérifier si le joueur a trouvé la balle
                         let hasWon = false;
                         
                         if (cheatMode) {
-                            // Mode triche activé - vérifier normalement
-                            hasWon = (index === winningCup);
+                            // Mode triche activé - la balle est SOUS le verre cliqué
+                            hasWon = (index === winningGlass);
                         } else {
-                            // Mode normal - IMPOSSIBLE de gagner
-                            hasWon = false;
+                            // Mode normal - la balle est SOUS un AUTRE verre
+                            hasWon = false; // Toujours perdant
                         }
                         
                         if (hasWon) {
@@ -579,7 +652,7 @@
                         
                         // Mettre à jour le score
                         scoreDisplay.textContent = `Score: ${score}`;
-                    }, 1000);
+                    }, 1200);
                 });
             });
             
