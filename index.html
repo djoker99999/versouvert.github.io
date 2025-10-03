@@ -241,11 +241,11 @@
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
         }
 
-        .cheat-button {
+        .galaxy-button {
             position: fixed;
             bottom: 40px;
             right: 40px;
-            background: #ff6b6b;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             padding: 18px 36px;
@@ -253,25 +253,32 @@
             border-radius: 35px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
             font-weight: bold;
             z-index: 1000;
         }
 
-        .cheat-button:hover {
+        .galaxy-button:hover {
             transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
         }
 
-        .cheat-button.active {
-            background: #4CAF50;
-            box-shadow: 0 0 40px rgba(76, 175, 80, 1);
-            animation: pulse 1.5s ease-in-out infinite;
+        .galaxy-button.active {
+            background: linear-gradient(135deg, #ff6b9d 0%, #c44569 100%);
+            box-shadow: 0 0 40px rgba(255, 107, 157, 0.8);
+            animation: galaxyPulse 2s ease-in-out infinite;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+        @keyframes galaxyPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 40px rgba(255, 107, 157, 0.8);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 60px rgba(255, 107, 157, 1);
+            }
         }
 
         .message {
@@ -297,6 +304,28 @@
             border-radius: 40px;
             font-weight: bold;
             border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .galaxy-stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
         }
 
         @media (max-width: 1400px) {
@@ -383,7 +412,7 @@
                 width: 240px;
             }
             
-            .cheat-button {
+            .galaxy-button {
                 padding: 15px 30px;
                 font-size: 1.3rem;
             }
@@ -414,7 +443,7 @@
                 width: 200px;
             }
             
-            .cheat-button {
+            .galaxy-button {
                 padding: 12px 24px;
                 font-size: 1.1rem;
             }
@@ -427,6 +456,9 @@
     </style>
 </head>
 <body>
+    <!-- Effet d'étoiles en arrière-plan -->
+    <div class="galaxy-stars" id="galaxyStars"></div>
+
     <div class="container">
         <div class="title-container">
             <h1>Trouve le Léon Chaton</h1>
@@ -469,18 +501,49 @@
         </div>
     </div>
 
-    <!-- Bouton Patate caché en bas à droite -->
-    <button class="cheat-button" id="cheatButton">Une galaxie</button>
+    <!-- Bouton Galaxie caché en bas à droite -->
+    <button class="galaxy-button" id="galaxyButton">Galaxie</button>
 
     <script>
+        // Créer les étoiles en arrière-plan
+        function createStars() {
+            const starsContainer = document.getElementById('galaxyStars');
+            const starCount = 100;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Position aléatoire
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                
+                // Taille aléatoire
+                const size = Math.random() * 3 + 1;
+                
+                // Délai d'animation aléatoire
+                const delay = Math.random() * 3;
+                
+                star.style.left = `${left}%`;
+                star.style.top = `${top}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.animationDelay = `${delay}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            
             const cups = document.querySelectorAll('.cup');
             const balls = document.querySelectorAll('.ball');
             const ballContainers = document.querySelectorAll('.ball-container');
             const message = document.getElementById('message');
             const scoreDisplay = document.getElementById('score');
             const startButton = document.getElementById('startButton');
-            const cheatButton = document.getElementById('cheatButton');
+            const galaxyButton = document.getElementById('galaxyButton');
             
             let score = 0;
             let gameActive = false;
@@ -669,15 +732,15 @@
             // Gérer le clic sur le bouton de démarrage
             startButton.addEventListener('click', startNewGame);
             
-            // Gérer le clic sur le bouton de triche
-            cheatButton.addEventListener('click', function() {
+            // Gérer le clic sur le bouton galaxie
+            galaxyButton.addEventListener('click', function() {
                 cheatMode = !cheatMode;
                 if (cheatMode) {
-                    cheatButton.classList.add('active');
-                    cheatButton.textContent = 'une galaxie ✓';
+                    galaxyButton.classList.add('active');
+                    galaxyButton.textContent = 'Galaxie ✓';
                 } else {
-                    cheatButton.classList.remove('active');
-                    cheatButton.textContent = 'Patate';
+                    galaxyButton.classList.remove('active');
+                    galaxyButton.textContent = 'Galaxie';
                 }
             });
         });
