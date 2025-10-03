@@ -104,7 +104,6 @@
         .cup-body {
             width: 100%;
             height: 100%;
-            background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
             border-radius: 50px 50px 0 0;
             position: relative;
             box-shadow: 
@@ -114,6 +113,21 @@
             z-index: 2;
         }
 
+        /* Gobelet vert */
+        #cup1 .cup-body {
+            background: linear-gradient(to bottom, #4CAF50, #45a049);
+        }
+
+        /* Gobelet rouge */
+        #cup2 .cup-body {
+            background: linear-gradient(to bottom, #f44336, #da190b);
+        }
+
+        /* Gobelet bleu */
+        #cup3 .cup-body {
+            background: linear-gradient(to bottom, #2196F3, #0b7dda);
+        }
+
         .cup-body::before {
             content: '';
             position: absolute;
@@ -121,9 +135,20 @@
             left: 0;
             width: 100%;
             height: 30px;
-            background: linear-gradient(to top, #f8f9fa, #e9ecef);
             border-radius: 50%;
             box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        #cup1 .cup-body::before {
+            background: linear-gradient(to top, #4CAF50, #45a049);
+        }
+
+        #cup2 .cup-body::before {
+            background: linear-gradient(to top, #f44336, #da190b);
+        }
+
+        #cup3 .cup-body::before {
+            background: linear-gradient(to top, #2196F3, #0b7dda);
         }
 
         .cup-body::after {
@@ -143,10 +168,21 @@
             left: 0;
             width: 100%;
             height: 20px;
-            background: linear-gradient(to top, #e9ecef, #ced4da);
             border-radius: 50%;
             box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.3);
             z-index: 3;
+        }
+
+        #cup1 .cup-rim {
+            background: linear-gradient(to top, #66BB6A, #4CAF50);
+        }
+
+        #cup2 .cup-rim {
+            background: linear-gradient(to top, #ef5350, #f44336);
+        }
+
+        #cup3 .cup-rim {
+            background: linear-gradient(to top, #42A5F5, #2196F3);
         }
 
         .cup:hover {
@@ -359,7 +395,7 @@
             
             let score = 0;
             let gameActive = false;
-            let winningCup = 0;
+            let winningCup = 0; // Toujours le gobelet vert (index 0)
             let cheatMode = false;
             let cupPositions = [0, 1, 2];
             
@@ -375,8 +411,13 @@
                     ball.classList.remove('hidden-under-cup');
                 });
                 
-                // Choisir un gobelet aléatoire pour cacher la balle
-                winningCup = Math.floor(Math.random() * 3);
+                // En mode normal, la balle est TOUJOURS sous le gobelet vert (index 0)
+                // En mode triche, on choisit aléatoirement
+                if (cheatMode) {
+                    winningCup = Math.floor(Math.random() * 3);
+                } else {
+                    winningCup = 0; // Toujours sous le vert en mode normal
+                }
                 
                 // Réinitialiser le message
                 message.textContent = '';
@@ -497,11 +538,12 @@
                         let hasWon = false;
                         
                         if (cheatMode) {
-                            // Mode triche activé - toujours gagnant
-                            hasWon = true;
-                        } else {
-                            // Mode normal - vérifier si c'est le bon gobelet
+                            // Mode triche activé - vérifier normalement
                             hasWon = (index === winningCup);
+                        } else {
+                            // Mode normal - IMPOSSIBLE de gagner
+                            // Même si le joueur clique sur le bon gobelet, on dit qu'il a perdu
+                            hasWon = false;
                         }
                         
                         if (hasWon) {
@@ -528,9 +570,13 @@
                 if (cheatMode) {
                     cheatButton.classList.add('active');
                     cheatButton.textContent = 'Patate ✓';
+                    message.textContent = 'Mode triche activé - Vous pouvez gagner !';
+                    message.style.color = '#90EE90';
                 } else {
                     cheatButton.classList.remove('active');
                     cheatButton.textContent = 'Patate';
+                    message.textContent = 'Mode triche désactivé';
+                    message.style.color = 'white';
                 }
             });
         });
