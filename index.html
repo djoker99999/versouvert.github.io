@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu des Gobelets - Trouve la Balle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            text-align: center;
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            position: relative;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #ffd700, #ff6b9d, #c44569, #ffd700);
+            border-radius: 22px;
+            z-index: -1;
+            animation: borderGlow 3s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            background: linear-gradient(45deg, #ff6b9d, #feca57);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+            color: #e0e0e0;
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .game-container {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin-bottom: 30px;
+            position: relative;
+            height: 250px;
+            width: 100%;
+            perspective: 1000px;
+        }
+
+        .cup {
+            width: 120px;
+            height: 180px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .cup-body {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+            border-radius: 0 0 50px 50px;
+            position: relative;
+            box-shadow: 
+                inset 0 -10px 20px rgba(0, 0, 0, 0.2),
+                0 10px 30px rgba(0, 0, 0, 0.4);
+            transform-style: preserve-3d;
+            z-index: 2;
+        }
+
+        .cup-body::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+            border-radius: 50%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .cup-body::after {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 5%;
+            width: 90%;
+            height: 25px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.8), rgba(255,255,255,0.2));
+            border-radius: 50%;
+        }
+
+        .cup-rim {
+            position: absolute;
+            top: -10px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: linear-gradient(to bottom, #e9ecef, #ced4da);
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+            z-index: 3;
+        }
+
+        .cup:hover {
+            transform: translateY(-10px) rotateX(10deg);
+        }
+
+        .cup.lifted {
+            transform: translateY(-50px) rotateX(15deg);
+        }
+
+        .ball {
+            width: 50px;
+            height: 50px;
+            background-image: url('https://i.ibb.co/hxXnkQh7/IMG-5861.png');
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.8);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .ball.visible {
+            opacity: 1;
+        }
+
+        .ball.hidden-under-cup {
+            bottom: 20px;
+            z-index: 0;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #startButton {
+            width: 220px;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+        }
+
+        #startButton:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .cheat-button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            margin-top: 15px;
+            font-weight: bold;
+            display: none; /* Caché par défaut */
+        }
+
+        .cheat-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .cheat-button.active {
+            background: #4CAF50;
+            box-shadow: 0 0 15px rgba(76, 175, 80, 0.7);
+        }
+
+        .message {
+            font-size: 1.5rem;
+            margin-top: 20px;
+            min-height: 60px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 10px 20px;
+        }
+
+        .score {
+            font-size: 1.3rem;
+            margin-top: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .game-container {
+                gap: 30px;
+            }
+            
+            .cup {
+                width: 100px;
+                height: 150px;
+            }
+            
+            #startButton {
+                width: 180px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            p {
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .game-container {
+                gap: 20px;
+            }
+            
+            .cup {
+                width: 80px;
+                height: 120px;
+            }
+            
+            #startButton {
+                width: 150px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Jeu des Gobelets</h1>
+        <p>Trouvez sous quel gobelet se cache la balle ! Cliquez sur l'image pour commencer une partie.</p>
+        
+        <div class="game-area">
+            <div class="game-container">
+                <div class="cup" id="cup1">
+                    <div class="cup-rim"></div>
+                    <div class="cup-body"></div>
+                    <div class="ball" id="ball1"></div>
+                </div>
+                <div class="cup" id="cup2">
+                    <div class="cup-rim"></div>
+                    <div class="cup-body"></div>
+                    <div class="ball" id="ball2"></div>
+                </div>
+                <div class="cup" id="cup3">
+                    <div class="cup-rim"></div>
+                    <div class="cup-body"></div>
+                    <div class="ball" id="ball3"></div>
+                </div>
+            </div>
+            
+            <div class="message" id="message">Cliquez sur l'image pour commencer une partie !</div>
+            <div class="score" id="score">Score: 0</div>
+            
+            <div class="controls">
+                <img id="startButton" src="https://i.ibb.co/JMPfpWV/IMG-5851.png" alt="Commencer">
+                <button class="cheat-button" id="cheatButton">Patate</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cups = document.querySelectorAll('.cup');
+            const balls = document.querySelectorAll('.ball');
+            const message = document.getElementById('message');
+            const scoreDisplay = document.getElementById('score');
+            const startButton = document.getElementById('startButton');
+            const cheatButton = document.getElementById('cheatButton');
+            
+            let score = 0;
+            let gameActive = false;
+            let winningCup = 0;
+            let cheatMode = false;
+            let cupPositions = [0, 1, 2];
+            
+            // Fonction pour démarrer une nouvelle partie
+            function startNewGame() {
+                // Désactiver le bouton pendant le jeu
+                startButton.style.opacity = "0.5";
+                startButton.style.pointerEvents = "none";
+                
+                // Cacher toutes les balles
+                balls.forEach(ball => {
+                    ball.classList.remove('visible');
+                    ball.classList.remove('hidden-under-cup');
+                });
+                
+                // Choisir un gobelet aléatoire pour cacher la balle
+                winningCup = Math.floor(Math.random() * 3);
+                
+                // Réinitialiser le message
+                message.textContent = '';
+                message.style.color = 'white';
+                
+                // Montrer la balle au début (sous le bon gobelet)
+                balls[winningCup].classList.add('visible');
+                message.textContent = "Regardez bien où est la balle...";
+                
+                // Après 1.5 secondes, simuler la mise sous le gobelet
+                setTimeout(() => {
+                    balls[winningCup].classList.remove('visible');
+                    balls[winningCup].classList.add('hidden-under-cup');
+                    message.textContent = "Les gobelets se mélangent...";
+                    shuffleCups();
+                }, 1500);
+            }
+            
+            // Fonction pour mélanger les gobelets
+            function shuffleCups() {
+                let shuffleCount = 0;
+                const maxShuffles = 8;
+                
+                function performShuffle() {
+                    if (shuffleCount >= maxShuffles) {
+                        // Fin du mélange, activer le jeu
+                        gameActive = true;
+                        message.textContent = "Où est la balle ? Cliquez sur un gobelet !";
+                        startButton.style.opacity = "1";
+                        startButton.style.pointerEvents = "auto";
+                        return;
+                    }
+                    
+                    // Choisir deux gobelets aléatoires à échanger
+                    const cup1Index = Math.floor(Math.random() * 3);
+                    let cup2Index;
+                    do {
+                        cup2Index = Math.floor(Math.random() * 3);
+                    } while (cup2Index === cup1Index);
+                    
+                    const cup1 = cups[cup1Index];
+                    const cup2 = cups[cup2Index];
+                    const ball1 = balls[cup1Index];
+                    const ball2 = balls[cup2Index];
+                    
+                    // Animer l'échange
+                    cup1.style.transition = "transform 0.4s ease";
+                    cup2.style.transition = "transform 0.4s ease";
+                    ball1.style.transition = "transform 0.4s ease";
+                    ball2.style.transition = "transform 0.4s ease";
+                    
+                    // Calculer la distance entre les gobelets
+                    const cup1Rect = cup1.getBoundingClientRect();
+                    const cup2Rect = cup2.getBoundingClientRect();
+                    const distance = cup2Rect.left - cup1Rect.left;
+                    
+                    // Animation d'échange
+                    cup1.style.transform = `translateX(${distance}px) rotateY(15deg)`;
+                    cup2.style.transform = `translateX(${-distance}px) rotateY(-15deg)`;
+                    ball1.style.transform = `translateX(${distance}px) translateX(-50%)`;
+                    ball2.style.transform = `translateX(${-distance}px) translateX(-50%)`;
+                    
+                    // Mettre à jour le gagnant si nécessaire
+                    if (cup1Index === winningCup) {
+                        winningCup = cup2Index;
+                    } else if (cup2Index === winningCup) {
+                        winningCup = cup1Index;
+                    }
+                    
+                    // Après l'animation, réinitialiser les transformations
+                    setTimeout(() => {
+                        cup1.style.transform = "";
+                        cup2.style.transform = "";
+                        ball1.style.transform = "translateX(-50%)";
+                        ball2.style.transform = "translateX(-50%)";
+                        
+                        // Mettre à jour les positions dans notre tableau
+                        const temp = cupPositions[cup1Index];
+                        cupPositions[cup1Index] = cupPositions[cup2Index];
+                        cupPositions[cup2Index] = temp;
+                        
+                        shuffleCount++;
+                        
+                        // Attendre avant le prochain échange
+                        setTimeout(performShuffle, 400);
+                    }, 400);
+                }
+                
+                performShuffle();
+            }
+            
+            // Gérer le clic sur un gobelet
+            cups.forEach((cup, index) => {
+                cup.addEventListener('click', function() {
+                    if (!gameActive) return;
+                    
+                    // Désactiver les clics pendant la vérification
+                    gameActive = false;
+                    
+                    // Animer le soulèvement du gobelet
+                    cup.classList.add('lifted');
+                    
+                    // Après un court délai, révéler le résultat
+                    setTimeout(() => {
+                        // Réinitialiser les transformations
+                        cups.forEach(c => {
+                            c.style.transform = "";
+                            c.classList.remove('lifted');
+                        });
+                        
+                        // Montrer toutes les balles pour révéler où était la vraie
+                        balls.forEach(ball => {
+                            ball.classList.remove('hidden-under-cup');
+                        });
+                        balls[winningCup].classList.add('visible');
+                        
+                        // Vérifier si le joueur a trouvé la balle
+                        let hasWon = false;
+                        
+                        if (cheatMode) {
+                            // Mode triche activé - toujours gagnant
+                            hasWon = true;
+                        } else {
+                            // Mode normal - vérifier si c'est le bon gobelet
+                            hasWon = (index === winningCup);
+                        }
+                        
+                        if (hasWon) {
+                            message.textContent = 'Félicitations ! Vous avez trouvé la balle !';
+                            message.style.color = '#90EE90';
+                            score++;
+                        } else {
+                            message.textContent = 'Dommage ! La balle était ailleurs.';
+                            message.style.color = '#FF6B6B';
+                        }
+                        
+                        // Mettre à jour le score
+                        scoreDisplay.textContent = `Score: ${score}`;
+                    }, 600);
+                });
+            });
+            
+            // Gérer le clic sur le bouton de démarrage
+            startButton.addEventListener('click', startNewGame);
+            
+            // Gérer le clic sur le bouton de triche (caché par défaut)
+            cheatButton.addEventListener('click', function() {
+                cheatMode = !cheatMode;
+                if (cheatMode) {
+                    cheatButton.classList.add('active');
+                    cheatButton.textContent = 'Patate ✓';
+                } else {
+                    cheatButton.classList.remove('active');
+                    cheatButton.textContent = 'Patate';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
