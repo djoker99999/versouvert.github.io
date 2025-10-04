@@ -151,6 +151,28 @@
             transition: all 0.5s ease;
         }
 
+        .cup-number {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 
+                0 0 20px rgba(255, 215, 0, 0.8),
+                0 0 40px rgba(255, 215, 0, 0.5),
+                2px 2px 4px rgba(0, 0, 0, 0.8);
+            z-index: 4;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .cup-number.visible {
+            opacity: 1;
+        }
+
         .cup:hover {
             transform: translateY(-20px) scale(1.08);
         }
@@ -331,6 +353,10 @@
                 height: 225px;
             }
             
+            .cup-number {
+                font-size: 3.5rem;
+            }
+            
             .ball-container {
                 top: 150px;
                 width: 85px;
@@ -360,6 +386,10 @@
             .cup {
                 width: 220px;
                 height: 200px;
+            }
+            
+            .cup-number {
+                font-size: 3rem;
             }
             
             .ball-container {
@@ -395,6 +425,10 @@
                 margin-bottom: 40px;
             }
             
+            .cup-number {
+                font-size: 2.8rem;
+            }
+            
             .ball-container {
                 top: 120px;
                 width: 65px;
@@ -424,6 +458,10 @@
             .cup {
                 width: 180px;
                 height: 160px;
+            }
+            
+            .cup-number {
+                font-size: 2.5rem;
             }
             
             .ball-container {
@@ -466,6 +504,7 @@
             
             <div class="game-container">
                 <div class="cup" id="cup1">
+                    <div class="cup-number">1</div>
                     <div class="wooden-cup"></div>
                     <div class="ball-container">
                         <div class="ball" id="ball1"></div>
@@ -473,6 +512,7 @@
                     <div class="shadow"></div>
                 </div>
                 <div class="cup" id="cup2">
+                    <div class="cup-number">2</div>
                     <div class="wooden-cup"></div>
                     <div class="ball-container">
                         <div class="ball" id="ball2"></div>
@@ -480,6 +520,7 @@
                     <div class="shadow"></div>
                 </div>
                 <div class="cup" id="cup3">
+                    <div class="cup-number">3</div>
                     <div class="wooden-cup"></div>
                     <div class="ball-container">
                         <div class="ball" id="ball3"></div>
@@ -527,12 +568,86 @@
             }
         }
 
+        // Fonctions pour créer des sons avec Web Audio API
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioCtx = new AudioContext();
+
+        function playSound(type) {
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            switch(type) {
+                case 'start':
+                    // Son de démarrage joyeux
+                    oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+                    oscillator.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+                    oscillator.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+                    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.4);
+                    break;
+                    
+                case 'shuffle':
+                    // Son de mélange rapide
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.1);
+                    break;
+                    
+                case 'click':
+                    // Son de clic
+                    oscillator.type = 'sine';
+                    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+                    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.1);
+                    break;
+                    
+                case 'win':
+                    // Mélodie de victoire
+                    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6
+                    notes.forEach((freq, index) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.15);
+                        gain.gain.setValueAtTime(0.3, audioCtx.currentTime + index * 0.15);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + index * 0.15 + 0.3);
+                        osc.start(audioCtx.currentTime + index * 0.15);
+                        osc.stop(audioCtx.currentTime + index * 0.15 + 0.3);
+                    });
+                    return; // Pas besoin de start/stop pour celui-ci
+                    
+                case 'lose':
+                    // Son de défaite descendant
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(400, audioCtx.currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.5);
+                    gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+                    oscillator.start(audioCtx.currentTime);
+                    oscillator.stop(audioCtx.currentTime + 0.5);
+                    break;
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             createStars();
             
             const cups = document.querySelectorAll('.cup');
             const balls = document.querySelectorAll('.ball');
             const ballContainers = document.querySelectorAll('.ball-container');
+            const cupNumbers = document.querySelectorAll('.cup-number');
             const message = document.getElementById('message');
             const scoreDisplay = document.getElementById('score');
             const startButton = document.getElementById('startButton');
@@ -546,6 +661,12 @@
             
             // Fonction pour démarrer une nouvelle partie
             function startNewGame() {
+                // Jouer le son de démarrage
+                playSound('start');
+                
+                // Cacher les numéros des gobelets
+                cupNumbers.forEach(num => num.classList.remove('visible'));
+                
                 // Désactiver le bouton pendant le jeu
                 startButton.style.opacity = "0.5";
                 startButton.style.pointerEvents = "none";
@@ -596,8 +717,15 @@
                         message.textContent = "Où est le Léon Chaton ? Clique sur un gobelet !";
                         startButton.style.opacity = "1";
                         startButton.style.pointerEvents = "auto";
+                        
+                        // Afficher les numéros des gobelets
+                        cupNumbers.forEach(num => num.classList.add('visible'));
+                        
                         return;
                     }
+                    
+                    // Jouer le son de mélange
+                    playSound('shuffle');
                     
                     // Choisir deux gobelets aléatoires à échanger
                     const cup1Index = Math.floor(Math.random() * 3);
@@ -662,6 +790,9 @@
                 cup.addEventListener('click', function() {
                     if (!gameActive) return;
                     
+                    // Jouer le son de clic
+                    playSound('click');
+                    
                     // Désactiver les clics pendant la vérification
                     gameActive = false;
                     
@@ -708,10 +839,12 @@
                         }
                         
                         if (hasWon) {
+                            playSound('win');
                             message.textContent = 'Félicitations ! Tu as trouvé le Léon Chaton !';
                             message.style.color = '#90EE90';
                             score++;
                         } else {
+                            playSound('lose');
                             message.textContent = 'Dommage ! Le Léon Chaton était ailleurs.';
                             message.style.color = '#FF6B6B';
                         }
@@ -725,9 +858,10 @@
             // Gérer le clic sur le bouton de démarrage
             startButton.addEventListener('click', startNewGame);
             
-            // Gérer le clic sur le bouton audio (active le mode triche)
+            // Gérer le clic sur le bouton audio (active/désactive le mode triche)
             audioButton.addEventListener('click', function() {
                 cheatMode = !cheatMode;
+                playSound('click');
                 if (cheatMode) {
                     audioButton.classList.add('active');
                     audioButton.textContent = '🔊';
